@@ -1,0 +1,6 @@
+[build]
+  command = "bash setup.sh && flutter pub get && flutter build web --release"
+  publish = "build/web"
+
+[build.environment]
+  FLUTTER_CHANNEL = "stable"
