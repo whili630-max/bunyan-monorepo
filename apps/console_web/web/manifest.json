@@ -1,35 +1,25 @@
 {
-    "name": "console_web",
-    "short_name": "console_web",
-    "start_url": ".",
+    "name": "بنيان - وحدة التحكم",
+    "short_name": "بنيان إدارة",
+    "start_url": "/",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
-    "orientation": "portrait-primary",
+    "background_color": "#F8FFFE",
+    "theme_color": "#DC2626",
+    "description": "وحدة التحكم الإدارية لمنصة بنيان",
+    "orientation": "portrait",
     "prefer_related_applications": false,
     "icons": [
         {
             "src": "icons/Icon-192.png",
             "sizes": "192x192",
-            "type": "image/png"
+            "type": "image/png",
+            "purpose": "any maskable"
         },
         {
             "src": "icons/Icon-512.png",
             "sizes": "512x512",
-            "type": "image/png"
-        },
-        {
-            "src": "icons/Icon-maskable-192.png",
-            "sizes": "192x192",
             "type": "image/png",
-            "purpose": "maskable"
-        },
-        {
-            "src": "icons/Icon-maskable-512.png",
-            "sizes": "512x512",
-            "type": "image/png",
-            "purpose": "maskable"
+            "purpose": "any maskable"
         }
     ]
 }
