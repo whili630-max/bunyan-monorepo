@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'pages/request_service_page.dart';
 import 'pages/supplier_signup_page.dart';
 import 'constants.dart';
 
-void main() => runApp(const BunyanApp());
+void main() {
+  if (kIsWeb) {
+    setUrlStrategy(PathUrlStrategy());
+  }
+  runApp(const BunyanApp());
+}
 
 class BunyanApp extends StatelessWidget {
   const BunyanApp({super.key});
@@ -12,10 +20,28 @@ class BunyanApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = ThemeData(
       useMaterial3: true,
-      colorSchemeSeed: const Color(0xFF2E7D32),
-      fontFamily: 'Segoe UI',
-      inputDecorationTheme: const InputDecorationTheme(
-        border: OutlineInputBorder(),
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: const Color(0xFF0D7C66),
+        brightness: Brightness.light,
+      ),
+      fontFamily: 'Cairo',
+      scaffoldBackgroundColor: const Color(0xFFF8FFFE),
+      appBarTheme: const AppBarTheme(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        centerTitle: true,
+        titleTextStyle: TextStyle(
+          color: Color(0xFF2D3748),
+          fontSize: 20,
+          fontWeight: FontWeight.w600,
+        ),
+        iconTheme: IconThemeData(color: Color(0xFF2D3748)),
+      ),
+      cardTheme: const CardThemeData(
+        elevation: 2,
+        shadowColor: Colors.black12,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(16))),
+        color: Colors.white,
       ),
     );
     return Directionality(
@@ -24,12 +50,27 @@ class BunyanApp extends StatelessWidget {
         title: 'بنيان',
         debugShowCheckedModeBanner: false,
         locale: const Locale('ar'),
-        supportedLocales: const [Locale('ar'), Locale('en')],
+        supportedLocales: const [
+          Locale('ar', 'SA'),
+          Locale('en', 'US'),
+        ],
+        localizationsDelegates: [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
         theme: theme,
+        initialRoute: '/',
         routes: {
           '/': (context) => const HomeScreen(),
           '/request': (context) => const RequestServicePage(),
           '/supplier': (context) => const SupplierSignupPage(),
+        },
+        onUnknownRoute: (settings) {
+          return MaterialPageRoute(
+            builder: (context) => const HomeScreen(),
+            settings: settings,
+          );
         },
       ),
     );
@@ -42,77 +83,300 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF8FFFE),
       appBar: AppBar(
-        title: const Text('بنيان - خدمات البناء 2025'),
-        centerTitle: true,
+        backgroundColor: Colors.white,
+        elevation: 0,
+        title: Row(
+          children: [
+            Container(
+              width: 32,
+              height: 32,
+              decoration: const BoxDecoration(
+                color: Color(0xFF0D7C66),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.home_work, color: Colors.white, size: 18),
+            ),
+            const SizedBox(width: 12),
+            const Text(
+              'بنيان',
+              style: TextStyle(
+                color: Color(0xFF2D3748),
+                fontSize: 24,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ],
+        ),
         actions: [
-          TextButton.icon(
-            onPressed: () => Navigator.pushNamed(context, '/supplier'),
-            icon: const Icon(Icons.storefront_outlined),
-            label: const Text('تسجيل مورد'),
+          Container(
+            margin: const EdgeInsets.only(left: 16),
+            child: IconButton(
+              onPressed: () => Navigator.pushNamed(context, '/supplier'),
+              icon: Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: const Color(0xFF0D7C66).withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Icon(
+                  Icons.person_add,
+                  color: Color(0xFF0D7C66),
+                  size: 20,
+                ),
+              ),
+            ),
           ),
         ],
       ),
-      body: GridView.count(
-        crossAxisCount: 2,
-        padding: const EdgeInsets.all(20),
-        mainAxisSpacing: 15,
-        crossAxisSpacing: 15,
-        children: [
-          for (final cat in serviceCategories)
-            _buildServiceCard(context, cat, _iconForCategory(cat)),
-          _buildServiceCard(context, 'أخرى', Icons.more_horiz),
-        ],
-      ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-        child: Wrap(
-          alignment: WrapAlignment.center,
-          spacing: 12,
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            TextButton(
-              onPressed: () => Navigator.pushNamed(context, '/request'),
-              child: const Text('طلب خدمة'),
+            // Search Bar
+            Container(
+              margin: const EdgeInsets.all(20),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              height: 56,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: const Color(0xFFE2E8F0)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.04),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: const Row(
+                children: [
+                  Icon(Icons.search, color: Color(0xFF94A3B8), size: 20),
+                  SizedBox(width: 12),
+                  Expanded(
+                    child: TextField(
+                      decoration: InputDecoration(
+                        hintText: 'ابحث عن الخدمة التي تحتاجها...',
+                        hintStyle: TextStyle(
+                          color: Color(0xFF94A3B8),
+                          fontSize: 16,
+                        ),
+                        border: InputBorder.none,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-            TextButton(
-              onPressed: () => Navigator.pushNamed(context, '/supplier'),
-              child: const Text('تسجيل مورد'),
+
+            // Categories Title
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: Text(
+                'خدمات البناء',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xFF2D3748),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // Services Grid
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  childAspectRatio: 1.1,
+                  crossAxisSpacing: 16,
+                  mainAxisSpacing: 16,
+                ),
+                itemCount: serviceCategories.length + 1,
+                itemBuilder: (context, index) {
+                  if (index < serviceCategories.length) {
+                    final service = serviceCategories[index];
+                    return _buildModernServiceCard(
+                      context,
+                      service,
+                      _iconForCategory(service),
+                      _colorForCategory(service),
+                    );
+                  } else {
+                    return _buildModernServiceCard(
+                      context,
+                      'خدمات أخرى',
+                      Icons.more_horiz,
+                      const Color(0xFF6B7280),
+                    );
+                  }
+                },
+              ),
+            ),
+            const SizedBox(height: 100),
+          ],
+        ),
+      ),
+      floatingActionButton: Container(
+        width: 200,
+        height: 56,
+        margin: const EdgeInsets.only(bottom: 20),
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [Color(0xFF0D7C66), Color(0xFF14B8A6)],
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+          ),
+          borderRadius: BorderRadius.circular(28),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFF0D7C66).withOpacity(0.3),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
             ),
           ],
+        ),
+        child: ElevatedButton(
+          onPressed: () => Navigator.pushNamed(context, '/request'),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.transparent,
+            shadowColor: Colors.transparent,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(28),
+            ),
+          ),
+          child: const Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.add_circle_outline, color: Colors.white, size: 20),
+              SizedBox(width: 8),
+              Text(
+                'طلب خدمة جديدة',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+    );
+  }
+
+  Widget _buildModernServiceCard(
+    BuildContext context,
+    String title,
+    IconData icon,
+    Color color,
+  ) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => RequestServicePage(serviceType: title),
+            ),
+          ),
+          borderRadius: BorderRadius.circular(20),
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  width: 60,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    color: color.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(18),
+                  ),
+                  child: Icon(
+                    icon,
+                    size: 28,
+                    color: color,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  title,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF2D3748),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildServiceCard(BuildContext context, String title, IconData icon) {
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: () => Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => RequestServicePage(serviceType: title),
-          ),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, size: 44, color: Theme.of(context).colorScheme.primary),
-            const SizedBox(height: 10),
-            Text(
-              title,
-              style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
-            ),
-          ],
-        ),
-      ),
-    );
+  Color _colorForCategory(String category) {
+    switch (category) {
+      case 'أعمال الحفر':
+        return const Color(0xFFEF4444);
+      case 'أعمال الخرسانة':
+        return const Color(0xFF6B7280);
+      case 'أعمال الحديد':
+        return const Color(0xFF0EA5E9);
+      case 'أعمال الكهرباء':
+        return const Color(0xFFF59E0B);
+      case 'أعمال السباكة':
+        return const Color(0xFF3B82F6);
+      case 'أعمال البلاط':
+        return const Color(0xFF8B5CF6);
+      case 'أعمال الدهان':
+        return const Color(0xFF10B981);
+      case 'أعمال النجارة':
+        return const Color(0xFFF97316);
+      default:
+        return const Color(0xFF6B7280);
+    }
   }
 
   IconData _iconForCategory(String cat) {
     switch (cat) {
+      case 'أعمال الحفر':
+        return Icons.agriculture;
+      case 'أعمال الخرسانة':
+        return Icons.foundation;
+      case 'أعمال الحديد':
+        return Icons.settings;
+      case 'أعمال الكهرباء':
+        return Icons.electrical_services;
+      case 'أعمال السباكة':
+        return Icons.plumbing;
+      case 'أعمال البلاط':
+        return Icons.grid_view;
+      case 'أعمال الدهان':
+        return Icons.format_paint;
+      case 'أعمال النجارة':
+        return Icons.carpenter;
       case 'سباكة':
         return Icons.plumbing;
       case 'كهرباء':

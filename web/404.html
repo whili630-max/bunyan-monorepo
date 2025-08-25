@@ -4,24 +4,16 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <base href="/" />
-
   <title>بنيان - خدمات بناء المنازل</title>
-
-  <!-- PWA -->
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   <meta name="theme-color" content="#0175C2" />
-
   <link rel="manifest" href="manifest.json" />
-
-  <!-- Icons (تأكد أنها موجودة فعلاً في web/icons) -->
   <link rel="icon" type="image/png" sizes="192x192" href="icons/Icon-192.png" />
   <link rel="icon" type="image/png" sizes="512x512" href="icons/Icon-512.png" />
   <link rel="apple-touch-icon" sizes="192x192" href="icons/Icon-192.png" />
   <link rel="apple-touch-icon" sizes="512x512" href="icons/Icon-512.png" />
-
-  <!-- محمّل Flutter الجديد فقط -->
   <link rel="preload" href="flutter_bootstrap.js" as="script" />
   <style>
     html,body{height:100%;margin:0;background:#F8FFFE;font-family:system-ui,"Segoe UI",Tahoma}
@@ -30,8 +22,6 @@
 </head>
 <body>
   <div id="loading">جاري تحميل التطبيق…</div>
-
-  <!-- لا تستخدم _flutter ولا serviceWorkerVersion -->
   <script defer src="flutter_bootstrap.js"></script>
   <script>
     addEventListener('flutter-first-frame', () => {
